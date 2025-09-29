@@ -1,0 +1,43 @@
+# Google Drive MCP Connector - Honolulu/Hawaii Timezone Cron Configuration
+# Use full paths and proper logging for production reliability
+
+# Set timezone for cron (add to crontab header)
+TZ=Pacific/Honolulu
+
+# Hourly health check and sync (every hour at minute 0)
+# Logs to dedicated file with timestamp and error capture
+0 * * * * /usr/bin/env bash /full/path/to/google-drive-mcp/scripts/google_drive_mcp.sh >> /var/log/google-drive-mcp.log 2>&1
+
+# MemoryPlugin feed every 30 minutes
+# Processes logs and feeds forensic data to memory system
+*/30 * * * * /usr/bin/env bash /full/path/to/google-drive-mcp/scripts/memory_plugin_feed.sh >> /var/log/google-drive-mcp-memory.log 2>&1
+
+# Health check with fallback every 15 minutes during business hours (8am-6pm HST)
+# More frequent monitoring during active hours
+*/15 8-18 * * * /usr/bin/env bash /full/path/to/google-drive-mcp/scripts/health_check_with_fallback.sh >> /var/log/google-drive-mcp-health.log 2>&1
+
+# Daily smoke test at 6 AM HST
+# Comprehensive validation to catch issues early
+0 6 * * * /usr/bin/env bash /full/path/to/google-drive-mcp/scripts/smoke_test.sh >> /var/log/google-drive-mcp-daily.log 2>&1
+
+# Weekly full test with error simulation on Sundays at 5 AM HST
+# Complete system validation including fallback scenarios
+0 5 * * 0 /usr/bin/env bash /full/path/to/google-drive-mcp/scripts/smoke_test.sh --full-test >> /var/log/google-drive-mcp-weekly.log 2>&1
+
+# Log rotation and cleanup monthly on 1st at 3 AM HST
+# Maintain log hygiene and prevent disk space issues
+0 3 1 * * /usr/bin/find /var/log -name "google-drive-mcp*.log" -mtime +90 -delete
+
+# INSTALLATION INSTRUCTIONS:
+# 1. Replace '/full/path/to/google-drive-mcp' with your actual installation path
+# 2. Ensure log directories exist: sudo mkdir -p /var/log && sudo chown $USER /var/log
+# 3. Add to your crontab: crontab -e
+# 4. Paste the lines above (excluding comments)
+# 5. Verify with: crontab -l
+
+# EXAMPLE FULL INSTALLATION:
+# crontab -e
+# Add these lines:
+# TZ=Pacific/Honolulu
+# 0 * * * * /usr/bin/env bash /home/user/google-drive-mcp/scripts/google_drive_mcp.sh >> /var/log/google-drive-mcp.log 2>&1
+# */30 * * * * /usr/bin/env bash /home/user/google-drive-mcp/scripts/memory_plugin_feed.sh >> /var/log/google-drive-mcp-memory.log 2>&1
