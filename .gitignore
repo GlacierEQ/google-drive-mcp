@@ -1,0 +1,52 @@
+# Security - Never commit real credentials
+config/.env
+*.env
+.env.*
+secrets/
+tokens/
+
+# Logs (keep structure but not content)
+logs/*.log
+logs/*.json
+!logs/.gitkeep
+
+# System files
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# IDE files
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Runtime files
+*.pid
+*.sock
+node_modules/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Test files
+test_output/
+debug/
+
+# OAuth credentials and sensitive data
+credentials.json
+client_secret*.json
+service-account*.json
+
+# Cache files
+.cache/
+*.cache
+
+# Build artifacts
+dist/
+build/
+*.tar.gz
+*.zip
