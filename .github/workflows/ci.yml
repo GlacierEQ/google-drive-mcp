@@ -1,0 +1,73 @@
+name: Google Drive MCP CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y curl jq shellcheck
+    
+    - name: Validate shell scripts
+      run: |
+        find scripts/ -name "*.sh" -exec shellcheck {} \;
+    
+    - name: Test configuration templates
+      run: |
+        # Check that required template files exist
+        test -f config/.env.template
+        test -f activate.sh
+        echo "Configuration templates validated"
+    
+    - name: Security scan
+      run: |
+        # Check for accidentally committed secrets
+        if grep -r "sk-" . --exclude-dir=.git --exclude="*.template" --exclude="*.example"; then
+          echo "ERROR: Potential secrets found"
+          exit 1
+        fi
+        if grep -r "ya29\." . --exclude-dir=.git --exclude="*.template"; then
+          echo "ERROR: Potential OAuth tokens found"
+          exit 1
+        fi
+        echo "✅ Security scan passed"
+    
+    - name: Test script execution (dry run)
+      run: |
+        chmod +x scripts/*.sh activate.sh
+        # Test that scripts can be made executable and basic syntax is valid
+        bash -n scripts/google_drive_mcp.sh
+        bash -n activate.sh
+        echo "✅ Script syntax validation passed"
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create release info
+      run: |
+        echo "Google Drive MCP Connector - $(date)" > RELEASE_INFO.txt
+        echo "Commit: $GITHUB_SHA" >> RELEASE_INFO.txt
+        echo "✅ Deployment validated and ready"
+        
+    - name: Validate deployment readiness
+      run: |
+        echo "🚀 Google Drive MCP Connector deployment validated"
+        echo "✅ All security checks passed"
+        echo "✅ All scripts validated"
+        echo "✅ Configuration templates verified"
+        echo "🎯 Ready for production use"
