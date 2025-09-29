@@ -1,0 +1,77 @@
+# MCP Orchestrator Configuration
+# Google Drive MCP Connector Integration
+
+connector:
+  name: "google-drive-mcp"
+  version: "1.0.0"
+  type: "storage"
+  priority: 8
+  
+  # Target Configuration
+  target_folder_id: "1YjaCFiKAduINrdq750dqtr6r9x2fb6JO"
+  
+  # API Rate Limits (Google Drive API v3)
+  rate_limits:
+    requests_per_100_seconds: 1000
+    requests_per_day: 10000000
+    upload_bandwidth: "750GB/day"
+    download_bandwidth: "10TB/day"
+  
+  # Timeouts and Retry Logic
+  timeouts:
+    connection_timeout: 30
+    read_timeout: 60
+    token_refresh_timeout: 10
+    
+  retry_policy:
+    max_attempts: 3
+    exponential_backoff: true
+    base_delay: 1
+    max_delay: 60
+    
+  # Circuit Breaker Thresholds
+  circuit_breaker:
+    failure_threshold: 5
+    timeout_threshold: 3
+    recovery_timeout: 300
+    
+  # OAuth Scopes (Minimal Required)
+  oauth_scopes:
+    - "https://www.googleapis.com/auth/drive.readonly"
+    - "https://www.googleapis.com/auth/drive.file"
+    
+  # Security Configuration
+  security:
+    pii_redaction: true
+    log_sanitization: true
+    credential_encryption: true
+    audit_trail: true
+    
+  # MemoryPlugin Integration
+  memory_plugin:
+    enabled: true
+    priority_scoring: true
+    forensic_logging: true
+    categories:
+      - "TECHNICAL_SYSTEMS"
+      - "STORAGE_OPERATIONS"
+      - "OAUTH_MANAGEMENT"
+    
+  # Fallback Configuration
+  fallback:
+    primary: "google-drive"
+    secondary: "dropbox"
+    tertiary: "notion"
+    auto_failover: true
+    health_check_interval: 300
+    
+  # Monitoring
+  monitoring:
+    health_check_endpoint: "/health"
+    metrics_enabled: true
+    log_level: "INFO"
+    log_retention_days: 90
+    
+  # Hawaii Time Zone Configuration
+  timezone: "Pacific/Honolulu"
+  cron_schedule: "0 * * * *"  # Every hour in HST
