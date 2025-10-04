@@ -1,0 +1,455 @@
+{
+  "$schema": "https://schemas.perplexity.ai/mcp/v1/config.schema.json",
+  "description": "Power Path Upgrades - Enhanced MCP Configuration for Case 1FDV-23-0001009",
+  "version": "2.0.0",
+  "lastUpdated": "2025-10-04T21:40:00Z",
+  
+  "mcpServers": {
+    "legal-research-powerhouse": {
+      "command": "python",
+      "args": ["-m", "mcp_servers.legal_research_powerhouse"],
+      "description": "FastMCP 2.0 Legal Research Server with intelligent tool selection",
+      "category": "legal_research",
+      "priority": 10,
+      "capabilities": [
+        "search_legal_precedent",
+        "deep_legal_analysis", 
+        "set_case_context",
+        "get_optimal_tools"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}",
+        "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+        "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}",
+        "GITHUB_CLIENT_ID": "${GITHUB_CLIENT_ID}",
+        "GITHUB_CLIENT_SECRET": "${GITHUB_CLIENT_SECRET}",
+        "CASE_NUMBER": "1FDV-23-0001009",
+        "JURISDICTION": "hawaii",
+        "CASE_TYPE": "family_court",
+        "FORENSIC_MODE": "true",
+        "LOG_LEVEL": "INFO"
+      },
+      "transport": {
+        "type": "stdio",
+        "fallback": "http",
+        "http_config": {
+          "port": 8001,
+          "path": "/mcp/legal-research",
+          "sse": true
+        }
+      },
+      "security": {
+        "progressive_scoping": true,
+        "initial_scopes": ["read_only", "search_basic"],
+        "authentication_required": true,
+        "audit_logging": true,
+        "rate_limiting": {
+          "requests_per_minute": 100,
+          "burst_limit": 20
+        }
+      },
+      "performance": {
+        "max_tools_per_context": 40,
+        "tool_selection_strategy": "intelligent",
+        "caching_enabled": true,
+        "cache_ttl_seconds": 300
+      }
+    },
+    
+    "perplexity-search-v2": {
+      "command": "python",
+      "args": ["-m", "connectors.perplexity_search_v2"],
+      "description": "Enhanced Perplexity Search API v2 with forensic logging",
+      "category": "search_api",
+      "priority": 9,
+      "capabilities": [
+        "advanced_search",
+        "bulk_search",
+        "legal_domain_filtering",
+        "forensic_logging"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}",
+        "CASE_NUMBER": "1FDV-23-0001009",
+        "JURISDICTION": "hawaii",
+        "FORENSIC_MODE": "true"
+      },
+      "transport": {
+        "type": "stdio"
+      },
+      "performance": {
+        "rate_limiting": {
+          "requests_per_minute": 60,
+          "batch_size": 5,
+          "delay_between_batches": 1.0
+        },
+        "retry_policy": {
+          "max_retries": 3,
+          "exponential_backoff": true,
+          "base_delay": 1.0
+        }
+      }
+    },
+    
+    "gmail-legal-evidence": {
+      "command": "python",
+      "args": ["-m", "connectors.gmail_legal_evidence"],
+      "description": "Gmail Legal Evidence Collector with OAuth and forensic compliance",
+      "category": "evidence_collection",
+      "priority": 8,
+      "capabilities": [
+        "search_case_emails",
+        "extract_email_content",
+        "label_as_evidence",
+        "forensic_chain_of_custody"
+      ],
+      "env": {
+        "GMAIL_CLIENT_ID": "${GMAIL_CLIENT_ID}",
+        "GMAIL_CLIENT_SECRET": "${GMAIL_CLIENT_SECRET}",
+        "GMAIL_REFRESH_TOKEN": "${GMAIL_REFRESH_TOKEN}",
+        "CASE_NUMBER": "1FDV-23-0001009",
+        "EVIDENCE_RETENTION_YEARS": "7",
+        "LEGAL_HOLD_STATUS": "active"
+      },
+      "transport": {
+        "type": "stdio"
+      },
+      "security": {
+        "required_scopes": ["evidence_read"],
+        "approval_required": true,
+        "audit_logging": true,
+        "oauth_refresh_enabled": true
+      }
+    },
+    
+    "google-drive-enhanced": {
+      "command": "bash",
+      "args": ["scripts/google_drive_mcp.sh"],
+      "description": "Enhanced Google Drive MCP with existing OAuth management",
+      "category": "file_management",
+      "priority": 7,
+      "capabilities": [
+        "file_upload",
+        "file_download",
+        "folder_sync",
+        "health_monitoring",
+        "memory_plugin_integration"
+      ],
+      "env": {
+        "GOOGLE_CLIENT_ID": "${GOOGLE_CLIENT_ID}",
+        "GOOGLE_CLIENT_SECRET": "${GOOGLE_CLIENT_SECRET}",
+        "GOOGLE_REFRESH_TOKEN": "${GOOGLE_REFRESH_TOKEN}",
+        "GOOGLE_ACCESS_TOKEN": "${GOOGLE_ACCESS_TOKEN}",
+        "GOOGLE_DRIVE_TARGET_FOLDER": "1YjaCFiKAduINrdq750dqtr6r9x2fb6JO",
+        "CASE_NUMBER": "1FDV-23-0001009"
+      },
+      "transport": {
+        "type": "stdio"
+      },
+      "monitoring": {
+        "health_check_interval": 300,
+        "circuit_breaker_enabled": true,
+        "fallback_enabled": true
+      }
+    },
+    
+    "memory-enhanced": {
+      "command": "python",
+      "args": ["-m", "memory.enhanced_mem0_integration"],
+      "description": "Enhanced memory system with cross-session continuity",
+      "category": "memory_management",
+      "priority": 6,
+      "capabilities": [
+        "store_case_memory",
+        "recall_case_information",
+        "create_case_session",
+        "forensic_memory_logging"
+      ],
+      "env": {
+        "MEM0_API_KEY": "${MEM0_API_KEY}",
+        "VECTOR_STORE_URL": "${VECTOR_STORE_URL}",
+        "EMBEDDING_MODEL": "text-embedding-3-large",
+        "CASE_NUMBER": "1FDV-23-0001009",
+        "FORENSIC_MODE": "true",
+        "RETENTION_POLICY": "7_years"
+      },
+      "transport": {
+        "type": "stdio"
+      },
+      "performance": {
+        "embedding_cache_enabled": true,
+        "batch_processing": true,
+        "max_memory_items_per_query": 50
+      }
+    }
+  },
+  
+  "serverComposition": {
+    "enabled": true,
+    "strategy": "intelligent_routing",
+    "primaryServer": "legal-research-powerhouse",
+    "routingRules": [
+      {
+        "condition": "query.contains('precedent') OR query.contains('case law')",
+        "route_to": "legal-research-powerhouse",
+        "priority": 10
+      },
+      {
+        "condition": "query.contains('email') OR query.contains('evidence')",
+        "route_to": "gmail-legal-evidence",
+        "priority": 9
+      },
+      {
+        "condition": "query.contains('search') OR query.contains('research')",
+        "route_to": "perplexity-search-v2",
+        "priority": 8
+      },
+      {
+        "condition": "query.contains('remember') OR query.contains('recall')",
+        "route_to": "memory-enhanced",
+        "priority": 7
+      },
+      {
+        "condition": "query.contains('file') OR query.contains('document')",
+        "route_to": "google-drive-enhanced",
+        "priority": 6
+      }
+    ],
+    "fallbackServer": "legal-research-powerhouse"
+  },
+  
+  "progressiveScoping": {
+    "enabled": true,
+    "initialScopes": [
+      "mcp:tools-basic",
+      "mcp:resources-read",
+      "search:basic"
+    ],
+    "scopeEscalation": {
+      "search:advanced": {
+        "approvalRequired": false,
+        "prerequisites": ["search:basic"],
+        "autoGrantAfterMinutes": 5
+      },
+      "evidence:read": {
+        "approvalRequired": true,
+        "prerequisites": ["search:basic"],
+        "justificationRequired": true,
+        "approvalTimeoutMinutes": 60
+      },
+      "evidence:write": {
+        "approvalRequired": true,
+        "prerequisites": ["evidence:read"],
+        "multiFactorRequired": true,
+        "adminApprovalRequired": true
+      },
+      "forensic:admin": {
+        "approvalRequired": true,
+        "prerequisites": ["evidence:write"],
+        "multiFactorRequired": true,
+        "adminApprovalRequired": true,
+        "auditLoggingRequired": true
+      }
+    }
+  },
+  
+  "authentication": {
+    "providers": {
+      "google": {
+        "clientId": "${GOOGLE_CLIENT_ID}",
+        "clientSecret": "${GOOGLE_CLIENT_SECRET}",
+        "allowedDomains": ["glacier-legal.com", "hawaii.gov"],
+        "scopes": ["email", "profile", "openid"]
+      },
+      "github": {
+        "clientId": "${GITHUB_CLIENT_ID}",
+        "clientSecret": "${GITHUB_CLIENT_SECRET}",
+        "organization": "GlacierEQ",
+        "requiredTeams": ["legal-research"]
+      }
+    },
+    "sessionManagement": {
+      "timeoutMinutes": 480,
+      "renewalThresholdMinutes": 60,
+      "maxConcurrentSessions": 5
+    }
+  },
+  
+  "forensicCompliance": {
+    "enabled": true,
+    "standards": ["FRE-901", "FRE-902", "SOC2-TypeII"],
+    "auditLogging": {
+      "level": "comprehensive",
+      "includeRequestBody": true,
+      "includeResponseBody": false,
+      "encryptionEnabled": true,
+      "retentionYears": 7
+    },
+    "chainOfCustody": {
+      "enabled": true,
+      "hashingAlgorithm": "SHA-256",
+      "timestampSource": "ntp",
+      "digitalSigningEnabled": true
+    },
+    "dataIntegrity": {
+      "checksumValidation": true,
+      "tamperDetection": true,
+      "immutableLogging": true
+    }
+  },
+  
+  "hawaiiOptimization": {
+    "timezone": "Pacific/Honolulu",
+    "businessHours": {
+      "start": "08:00",
+      "end": "18:00",
+      "daysOfWeek": ["monday", "tuesday", "wednesday", "thursday", "friday"]
+    },
+    "courtSchedule": {
+      "familyCourtHours": {
+        "start": "07:30",
+        "end": "16:30"
+      },
+      "filingDeadlines": {
+        "standardMotions": "16:00",
+        "emergencyMotions": "23:59"
+      }
+    },
+    "enhancedMonitoring": {
+      "businessHours": {
+        "interval": 900,
+        "priority": "high"
+      },
+      "afterHours": {
+        "interval": 3600,
+        "priority": "normal"
+      }
+    }
+  },
+  
+  "case1FDV230001009": {
+    "metadata": {
+      "caseNumber": "1FDV-23-0001009",
+      "caseType": "family_court",
+      "jurisdiction": "hawaii",
+      "court": "Family Court of the First Circuit",
+      "judge": "TBD",
+      "status": "active",
+      "created": "2023-01-01T00:00:00Z",
+      "lastUpdated": "2025-10-04T21:40:00Z"
+    },
+    "parties": {
+      "petitioner": "Casey",
+      "respondent": "Teresa",
+      "children": ["Kekoa"]
+    },
+    "keyDates": {
+      "caseInitiated": "2023-01-01",
+      "nextHearing": "TBD",
+      "discoveryDeadline": "TBD",
+      "trialDate": "TBD"
+    },
+    "evidenceManagement": {
+      "digitalEvidenceFolder": "1YjaCFiKAduINrdq750dqtr6r9x2fb6JO",
+      "emailEvidenceLabels": ["LEGAL_EVIDENCE", "CASE_1FDV_23_0001009"],
+      "retentionPolicy": "7_years_legal_retention",
+      "accessControls": ["casey@glacier-legal.com"]
+    },
+    "workflowAutomation": {
+      "evidenceCollection": {
+        "emailKeywords": ["custody", "visitation", "family court", "child support", "Kekoa"],
+        "documentTypes": ["court_orders", "motions", "correspondence", "financial_records"],
+        "autoLabeling": true,
+        "notificationEnabled": true
+      },
+      "deadlineTracking": {
+        "enabled": true,
+        "reminderDays": [30, 14, 7, 3, 1],
+        "escalationEnabled": true
+      }
+    }
+  },
+  
+  "monitoring": {
+    "healthChecks": {
+      "interval": 300,
+      "timeout": 30,
+      "retries": 3,
+      "alerting": {
+        "enabled": true,
+        "channels": ["email", "log"],
+        "escalation": {
+          "level1": "immediate",
+          "level2": "15_minutes",
+          "level3": "1_hour"
+        }
+      }
+    },
+    "performance": {
+      "metricsCollection": true,
+      "slowQueryThresholdMs": 5000,
+      "errorRateThreshold": 0.05,
+      "resourceUsageMonitoring": true
+    },
+    "logging": {
+      "level": "INFO",
+      "structured": true,
+      "includeTraceId": true,
+      "retention": {
+        "days": 90,
+        "forensicDays": 2555
+      }
+    }
+  },
+  
+  "deployment": {
+    "environment": "production",
+    "version": "2.0.0-power-path",
+    "rolloutStrategy": "blue-green",
+    "rollbackEnabled": true,
+    "backupStrategy": {
+      "frequency": "daily",
+      "retention": "30_days",
+      "verification": true
+    }
+  },
+  
+  "integrations": {
+    "e2b": {
+      "enabled": true,
+      "apiKey": "${E2B_API_KEY}",
+      "sandboxes": ["python", "legal-analysis"],
+      "timeoutMinutes": 30
+    },
+    "notion": {
+      "enabled": false,
+      "apiKey": "${NOTION_API_KEY}",
+      "databaseId": "${NOTION_CASE_DATABASE_ID}",
+      "autoSync": true
+    },
+    "linear": {
+      "enabled": false,
+      "apiKey": "${LINEAR_API_KEY}",
+      "teamId": "${LINEAR_TEAM_ID}",
+      "issueTracking": true
+    }
+  },
+  
+  "experimentalFeatures": {
+    "aiCodeGeneration": {
+      "enabled": true,
+      "model": "gpt-4o",
+      "sandboxed": true
+    },
+    "voiceRecognition": {
+      "enabled": false,
+      "provider": "whisper",
+      "realTime": false
+    },
+    "multiModalProcessing": {
+      "enabled": true,
+      "imageAnalysis": true,
+      "documentOcr": true
+    }
+  }
+}
